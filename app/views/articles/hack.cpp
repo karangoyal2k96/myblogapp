@@ -1,47 +1,37 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-list <int > first[26];
-list <int > second[26];
-string a,b,c;
-
-int func(int curra,int currb,int currc){
-
-	if(currc==c.size()) return 1;
-    cout<<curra<<" "<<currb<<" "<<currc<<"\n";
-    
-	list<int > :: iterator it1,tempit1;
-	list<int > :: iterator it2,tempit2;
-    tempit1=lower_bound(first[c[currc]-'a'].begin(),first[c[currc]-'a'].end(),curra);
-    tempit2=lower_bound(second[c[currc]-'a'].begin(),second[c[currc]-'a'].end(),currb);
-	int ans=0;
-
-	for(it1=tempit1;it1!=first[c[currc]-'a'].end();it1++){
-
-		ans+=func(*it1+1,currb,currc+1);
-	}
-	for(it2=tempit2;it2!=second[c[currc]-'a'].end();it2++){
-
-		ans+=func(curra,*it2+1,currc+1);
-	}
-
-	return ans;
-}
 
 int main(){
+    
+	int n,k;
+	cin>>n>>k;
 
-	
-	cin>>a>>b>>c;
+	long long int dp[1002][2002][4];
+	long long int mod=998244353;
+	for(int i=1;i<=1000;i++){
+		for(int  j=1;j<=2000;j++){
+			for(int k=1;k<=4;k++) dp[i][j][k]=0;
+		}
+	}
 
-    for(int i=0;i<a.size();i++){
+	dp[1][1][1]=1;
+	dp[1][1][2]=0;
+	dp[1][1][3]=0;
+	dp[1][1][4]=1;
+	dp[1][2][1]=0;
+	dp[1][2][2]=1;
+	dp[1][2][3]=1;
+	dp[1][2][4]=0;
 
-    	first[a[i]-'a'].push_back(i);
-    }
+	for(int i=2;i<=1000;i++){
+		for(int j=1;j<=2000;j++){
 
-    for(int i=0;i<b.size();i++){
-
-    	first[b[i]-'a'].push_back(i);
-    }
-
-    cout<<func(0,0,0);
+			dp[i][j][1]=(((dp[i-1][j-1][4]+dp[i-1][j][1])%mod+dp[i-1][j][2])%mod+dp[i-1][j][3])%mod;
+			dp[i][j][2]=(((dp[i-1][j-2][3]+dp[i-1][j-1][4])%mod+dp[i-1][j-1][1])%mod+dp[i-1][j][2])%mod;
+			dp[i][j][3]=(((dp[i-1][j][3]+dp[i-1][j-2][2])%mod+dp[i-1][j-1][1])%mod+dp[i-1][j-1][4])%mod;
+			dp[i][j][4]=(((dp[i-1][j-1][1]+dp[i-1][j][4])%mod+dp[i-1][j][2])%mod+dp[i-1][j][3])%mod;
+		}
+	}
+	cout<<(((dp[n][k][1]+dp[n][k][2])%mod+dp[n][k][3])%mod+dp[n][k][4])%mod;
 }
